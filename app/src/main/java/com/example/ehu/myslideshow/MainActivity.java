@@ -1,14 +1,17 @@
 package com.example.ehu.myslideshow;
 
 import android.annotation.SuppressLint;
-import android.media.Image;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.os.Handler;
+import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.view.animation.BounceInterpolator;
 import android.widget.ImageSwitcher;
 import android.widget.ImageView;
 import android.widget.ViewSwitcher;
+
+import java.util.Timer;
+import java.util.TimerTask;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -20,6 +23,27 @@ public class MainActivity extends AppCompatActivity {
             R.drawable.slide08, R.drawable.slide09};
 
     int mPosition = 0;
+
+    boolean mIsSlideshow = false;
+
+    public class MainTimerTask extends TimerTask {
+
+        @Override
+        public void run() {
+            if (mIsSlideshow) {
+                mHandler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        movePosition(1);
+                    }
+                });
+            }
+        }
+    }
+
+    Timer mTimer = new Timer();
+    TimerTask mTimerTask = new MainTimerTask();
+    Handler mHandler = new Handler();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,6 +59,8 @@ public class MainActivity extends AppCompatActivity {
             }
         });
         mImageSwitcher.setImageResource(mImageresources[0]);
+        //Timerの設定
+        mTimer.schedule(mTimerTask, 0, 5000);
     }
 
     public void onAnimationButtonTapped(final View view) {
@@ -51,6 +77,7 @@ public class MainActivity extends AppCompatActivity {
         }
         mImageSwitcher.setImageResource(mImageresources[mPosition]);
     }
+
     @SuppressLint("WrongViewCast")
     public void onPrevButtonTapped(View view) {
         mImageSwitcher.setInAnimation(this, android.R.anim.fade_in);
@@ -65,5 +92,9 @@ public class MainActivity extends AppCompatActivity {
         mImageSwitcher.setOutAnimation(this, android.R.anim.slide_out_right);
         movePosition(1);
         findViewById(R.id.imageView).animate().setDuration(1000).alpha(0.0f);
+    }
+
+    public void onSlideshowButtonTapped(View view) {
+        mIsSlideshow = !mIsSlideshow;
     }
 }
