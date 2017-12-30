@@ -1,6 +1,7 @@
 package com.example.ehu.myslideshow;
 
 import android.annotation.SuppressLint;
+import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
@@ -25,6 +26,7 @@ public class MainActivity extends AppCompatActivity {
     int mPosition = 0;
 
     boolean mIsSlideshow = false;
+    MediaPlayer mMediaPlayer;
 
     public class MainTimerTask extends TimerTask {
 
@@ -61,6 +63,9 @@ public class MainActivity extends AppCompatActivity {
         mImageSwitcher.setImageResource(mImageresources[0]);
         //Timerの設定
         mTimer.schedule(mTimerTask, 0, 5000);
+        //MediaPlayerの設定
+        mMediaPlayer = MediaPlayer.create(this, R.raw.getdown);
+        mMediaPlayer.setLooping(true);
     }
 
     public void onAnimationButtonTapped(final View view) {
@@ -96,5 +101,11 @@ public class MainActivity extends AppCompatActivity {
 
     public void onSlideshowButtonTapped(View view) {
         mIsSlideshow = !mIsSlideshow;
+        if (mIsSlideshow) {
+            mMediaPlayer.start();
+        }else{
+            mMediaPlayer.pause();
+            mMediaPlayer.seekTo(0);
+        }
     }
 }
